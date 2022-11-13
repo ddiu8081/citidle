@@ -2,7 +2,7 @@
 import L from 'leaflet';
 import { onMounted } from 'vue';
 
-let instance = $ref<L.Map | null>(null)
+let instance: L.Map
 const mapDom = $ref<HTMLElement | null>(null)
 
 const addMark = (center: [number, number]) => {
