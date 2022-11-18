@@ -3,19 +3,11 @@ import confetti from 'canvas-confetti'
 import Char from './components/Char.vue'
 import Map from './components/Map.vue'
 import { cityMap } from './cityMap'
-
+import pinyin from 'pinyin/lib/pinyin'
 import { startListen } from 'blive-message-listener/browser'
 import { type MsgHandler } from 'blive-message-listener'
 
-interface CharCheck {
-  char: string
-  status: 'right' | 'wrong' | 'normal'
-}
-
-interface Check {
-  word: CharCheck[]
-  location: string
-}
+import { checkWord, type Check } from './utils/check'
 
 let text = $ref('')
 const mapRef = $ref<InstanceType<typeof Map> | null>(null)
@@ -24,16 +16,19 @@ const resultArr = $ref<Check[]>([])
 const log = $ref<string[]>([])
 
 const handler: MsgHandler = {
-onIncomeDanmu: (msg) => {
-  console.log(msg.id, msg.body.content)
-  log.push(`${msg.body.user.uname}: ${msg.body.content}`)
-  text = msg.body.content
-  handleClick()
-},
+  onIncomeDanmu: (msg) => {
+    console.log(msg.id, msg.body.content)
+    log.push(`${msg.body.user.uname}: ${msg.body.content}`)
+    text = msg.body.content
+    handleClick()
+  },
 }
 startListen(652581, handler)
 
 const handleClick = () => {
+  const rawPinyin = pinyin(text, { style: 'tone2' })
+  console.log(rawPinyin)
+  
   if (!cityMap[text]) {
     return
   }
@@ -41,7 +36,7 @@ const handleClick = () => {
     mapRef.addMark(cityMap[text])
   }
   history.push(text)
-  resultArr.push(checkWord(text))
+  resultArr.push(checkWord(text, answer))
   if (text === answer) {
     confetti({
       angle: 60,
@@ -60,77 +55,10 @@ const handleClick = () => {
 }
 
 const answerIndex = Math.floor(Math.random() * Object.keys(cityMap).length)
-const answer = Object.keys(cityMap)[answerIndex]
-const answerCenter = cityMap[answer]
+// const answer = Object.keys(cityMap)[answerIndex]
+const answer = '赣州'
 
-const checkWord = (word: string) => {
-  const charArr = word.split('')
-  const answerArr = answer.split('')
-  const wordCheckResult: CharCheck[] = []
-  charArr.forEach((char, index) => {
-    if (char === answerArr[index]) {
-      wordCheckResult.push({
-        char,
-        status: 'right',
-      })
-    } else if (answerArr.includes(char)) {
-      wordCheckResult.push({
-        char,
-        status: 'wrong',
-      })
-    } else {
-      wordCheckResult.push({
-        char,
-        status: 'normal',
-      })
-    }
-  })
-  const locationCheckResult = checkLatLng(cityMap[word])
-  return {
-    word: wordCheckResult,
-    location: locationCheckResult,
-  }
-}
-
-const checkLatLng = ([lat, lng]: [number, number]) => {
-  const [answerLat, answerLng] = answerCenter
-  const latDiff = answerLat - lat
-  const lngDiff = answerLng - lng
-  enum Judge {
-    'less' = -1,
-    'equal' = 0,
-    'greater' = 1,
-  }
-  const latJudge: Judge = latDiff > 1 ? Judge.greater : latDiff < -1 ? Judge.less : Judge.equal
-  const lngJudge: Judge = lngDiff > 1 ? Judge.greater : lngDiff < -1 ? Judge.less : Judge.equal
-  // ➡️⬅️⬆️⬇️↗️↘️↙️↖️✅
-  if (latJudge === Judge.equal) {
-    if (lngJudge === Judge.equal) {
-      return '✅'
-    } else if (lngJudge === Judge.greater) {
-      return '➡️'
-    } else {
-      return '⬅️'
-    }
-  } else if (latJudge === Judge.greater) {
-    if (lngJudge === Judge.equal) {
-      return '⬆️'
-    } else if (lngJudge === Judge.greater) {
-      return '↗️'
-    } else {
-      return '↖️'
-    }
-  } else {
-    if (lngJudge === Judge.equal) {
-      return '⬇️'
-    } else if (lngJudge === Judge.greater) {
-      return '↘️'
-    } else {
-      return '↙️'
-    }
-  }
-  return ''
-}
+console.log('answer', answer)
 
 </script>
 
@@ -146,7 +74,7 @@ const checkLatLng = ([lat, lng]: [number, number]) => {
   <p text-sm text-white v-for="logItem in log">{{ logItem }}</p>
   <div pos-absolute top-4 left-4>
     <div v-for="prompt in resultArr">
-      <Char v-for="item in prompt.word" :char="item.char" :result="item.status" />
+      <Char v-for="item in prompt.word" :char="item.detail.char" :result="item" />
       <p text-white text-2xl>{{ prompt.location }}</p>
     </div>
   </div>
