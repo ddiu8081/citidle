@@ -55,8 +55,8 @@ const handleClick = () => {
 }
 
 const answerIndex = Math.floor(Math.random() * Object.keys(cityMap).length)
-// const answer = Object.keys(cityMap)[answerIndex]
-const answer = '赣州'
+const answer = Object.keys(cityMap)[answerIndex]
+// const answer = '赣州'
 
 console.log('answer', answer)
 
