@@ -1,7 +1,10 @@
 import { createSignal, For } from 'solid-js'
 import type { Component } from 'solid-js'
-import { Char } from './components/Char'
+
+import { Header } from './components/Header'
+import { Footer } from './components/Footer'
 import { Map } from './components/Map'
+import { RightPanel } from './components/RightPanel'
 
 import { cityMap } from './cityMap'
 import pinyin from 'pinyin/lib/pinyin'
@@ -10,24 +13,26 @@ import { checkWord, type Check } from './utils/check'
 
 let input: HTMLInputElement
 
+import debugResultArr from './debug'
+
 const [resultArr, setResultArr] = createSignal<Check[]>([])
+// const [resultArr, setResultArr] = createSignal<Check[]>(debugResultArr)
 
 const answerIndex = Math.floor(Math.random() * Object.keys(cityMap).length)
 const answer = Object.keys(cityMap)[answerIndex]
 // const answer = '赣州'
 console.log('answer', answer)
 
-const handleClick = () => {
+const handlePrompt = (prompt: string) => {
   // TODO: 厦门 => sha men
-  const judgeText = input!.value
-  const rawPinyin = pinyin(judgeText, { style: 'tone2' })
+  const rawPinyin = pinyin(prompt, { style: 'tone2' })
   console.log(rawPinyin)
   
-  if (!cityMap[judgeText]) {
+  if (!cityMap[prompt]) {
     return
   }
-  setResultArr([...resultArr(), checkWord(judgeText, answer)])
-  if (judgeText === answer) {
+  setResultArr([...resultArr(), checkWord(prompt, answer)])
+  if (prompt === answer) {
     console.log('bingo')
   }
 }
@@ -35,28 +40,15 @@ const handleClick = () => {
 const App: Component = () => {
   return (
     <>
-      <h1 text-yellow-600>Citidle</h1>
-      <main>
-        <div text-white m="x-4 y-6" w-180 h-120>
-          <Map results={resultArr()} />
-        </div>
+      <Header />
+      <main
+        flex="~ row" justify-center gap-6
+        my-8
+      >
+        <Map results={resultArr()} />
+        <RightPanel prompts={resultArr()} onPrompt={handlePrompt} />
       </main>
-      <input ref={input!} type="text" mt-3 />
-      <button onClick={handleClick}>Click</button>
-      <div pos-absolute top-4 left-4>
-        <For each={resultArr()}>
-          {(prompt) => (
-            <>
-              <For each={prompt.word}>
-                {(item) => (
-                  <Char char={item.detail.char} result={item} />
-                )}
-              </For>
-              <p text-white text-2xl>{ prompt.location }</p>
-            </>
-          )}
-        </For>
-      </div>
+      <Footer />
     </>
   )
 }

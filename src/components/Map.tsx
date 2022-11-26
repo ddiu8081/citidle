@@ -14,7 +14,7 @@ const buildMap = (container: HTMLElement) => {
   console.log('buildMap')
   instance = L.map(container, {
     center: [37, 110],
-    zoom: 3,
+    zoom: 5,
     attributionControl: false,
     zoomControl: false,
     // dragging: false,
@@ -46,5 +46,12 @@ export const Map: Component<Props> = (props) => {
       addMark(lastResult.judge.location)
     }
   })
-  return <div ref={mapDom!} h-120 bg="#242424"></div>
+  return (
+    <div
+      ref={mapDom!}
+      h-120 w-120
+      bg="#212121"
+      border border-dark-200
+    ></div>
+  )
 }
