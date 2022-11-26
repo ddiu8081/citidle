@@ -27,6 +27,10 @@ export interface CharCheck {
 }
 
 export interface Check {
+  judge: {
+    word: string
+    location: [number, number]
+  }
   word: CharCheck[]
   location: string
 }
@@ -112,6 +116,10 @@ export const checkWord = (prompt: string, answer: string): Check => {
   const answerCenter = cityMap[answer]
   const locationCheckResult = checkLatLng(cityMap[prompt], answerCenter)
   const result = {
+    judge: {
+      word: prompt,
+      location: cityMap[prompt],
+    },
     word: wordCheckResult,
     location: locationCheckResult,
   }

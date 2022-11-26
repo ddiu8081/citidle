@@ -1,18 +1,21 @@
 import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
+import solidPlugin from 'vite-plugin-solid'
 import Unocss from 'unocss/vite'
-import { presetUno, presetAttributify } from 'unocss'
+
+import { presetUno } from 'unocss/preset-uno'
+import presetAttributify from '@unocss/preset-attributify'
 
 export default defineConfig({
   plugins: [
-    vue({
-      reactivityTransform: true,
-    }),
+    solidPlugin(),
     Unocss({
       presets: [
-        presetAttributify(),
         presetUno(),
-      ]
+        presetAttributify(),
+      ],
     }),
   ],
+  build: {
+    target: 'esnext',
+  },
 })
