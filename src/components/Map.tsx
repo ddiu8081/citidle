@@ -84,7 +84,7 @@ export const Map: Component<Props> = (props) => {
         h-120 w-120
         bg="#212121"
         border border-dark-200
-      ></div>
+      />
     </>
   )
 }
