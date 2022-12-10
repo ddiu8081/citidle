@@ -1,7 +1,7 @@
 import { For, Show } from 'solid-js'
 import type { Component } from 'solid-js'
 
-import type { Check } from '../utils/check'
+import type { Check } from '../../types/types'
 import { Char } from './Char'
 
 interface Props {
@@ -12,6 +12,10 @@ interface Props {
 let input: HTMLInputElement
 
 export const RightPanel: Component<Props> = (props) => {
+  const handleClick = () => {
+    props.onPrompt(input.value)
+    input.value = ''
+  }
   return (
     <div
       h-120 w-48
@@ -44,7 +48,7 @@ export const RightPanel: Component<Props> = (props) => {
             focus="border-dark-50"
           />
           <button
-            onClick={() => { props.onPrompt(input!.value) }}
+            onClick={handleClick}
             block h-10 mt-2 w-full
             bg-dark-100 border-0
             text="white sm"

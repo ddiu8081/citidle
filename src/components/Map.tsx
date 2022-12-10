@@ -2,10 +2,9 @@ import { onMount, createEffect } from 'solid-js'
 import type { Component } from 'solid-js'
 import L from 'leaflet'
 
-import type { Check } from '../utils/check'
+import type { Check } from '../../types/types'
 
 let instance: L.Map
-let dom: HTMLDivElement
 let lastPromptCenter: [number, number]
 
 interface Props {
@@ -65,7 +64,7 @@ export const addMark = (center: [number, number], positionJudge: string) => {
   }
 }
 
-export const Map: Component<Props> = (props) => {
+export const MapComponent: Component<Props> = (props) => {
   let mapDom: HTMLDivElement
 
   onMount(() => buildMap(mapDom!))

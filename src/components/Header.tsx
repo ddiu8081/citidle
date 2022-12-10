@@ -7,7 +7,7 @@ export const Header: Component = () => {
       h-12 font-bold
       border-b border-dark-200
     >
-      Citidle
+      Citidle · 城市猜
     </header>
   )
 }

@@ -1,5 +1,5 @@
 import type { Component, JSX } from 'solid-js'
-import type { CharCheck } from '../utils/check'
+import type { CharCheck } from '../../types/types'
 import { getTonePosition, toneSvgPath } from '../utils/pinyin'
 
 interface Props {
@@ -54,7 +54,7 @@ export const Char: Component<Props> = (props) => {
         >
           { needReplaceI ? detail.pinyin.yunmu.replace('i', 'ı') : detail.pinyin.yunmu }
           <div style={toneStyle}>
-            <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-ok" absolute w="100%" left="0" top="0">
+            <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-ok absolute w-100% top-0 left-0">
               <path
                 d={toneSvgPath[detail.pinyin.tone - 1]}
                 fill="currentColor"

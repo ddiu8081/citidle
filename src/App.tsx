@@ -3,49 +3,36 @@ import type { Component } from 'solid-js'
 
 import { Header } from './components/Header'
 import { Footer } from './components/Footer'
-import { Map } from './components/Map'
+import { MapComponent } from './components/Map'
 import { RightPanel } from './components/RightPanel'
 
-import { cityMap } from './cityMap'
-import pinyin from 'pinyin/lib/pinyin'
-
-import { checkWord, type Check } from './utils/check'
-
-let input: HTMLInputElement
+import { supabase } from './utils/db'
+import type { Check } from '../types/types'
 
 import debugResultArr from './debug'
 
 const [resultArr, setResultArr] = createSignal<Check[]>([])
 // const [resultArr, setResultArr] = createSignal<Check[]>(debugResultArr)
 
-const answerIndex = Math.floor(Math.random() * Object.keys(cityMap).length)
-const answer = Object.keys(cityMap)[answerIndex]
-// const answer = '赣州'
-console.log('answer', answer)
-
-const handlePrompt = (prompt: string) => {
-  // TODO: 厦门 => sha men
-  const rawPinyin = pinyin(prompt, { style: 'tone2' })
-  console.log(rawPinyin)
-  
-  if (!cityMap[prompt]) {
+const handlePrompt = async (prompt: string) => {
+  const checkRes = await supabase.functions.invoke('check-word', {
+    body: {
+      judgeWord: prompt,
+    }
+  })
+  if (checkRes.error || !checkRes.data) {
+    console.log(checkRes.error)
     return
   }
-  setResultArr([...resultArr(), checkWord(prompt, answer)])
-  if (prompt === answer) {
-    console.log('bingo')
-  }
+  setResultArr([...resultArr(), checkRes.data])
 }
 
 const App: Component = () => {
   return (
     <>
       <Header />
-      <main
-        flex="~ row" justify-center gap-6
-        my-8
-      >
-        <Map results={resultArr()} />
+      <main flex="~ row" justify-center gap-6 my-8>
+        <MapComponent results={resultArr()} />
         <RightPanel prompts={resultArr()} onPrompt={handlePrompt} />
       </main>
       <Footer />
