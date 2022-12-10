@@ -35,5 +35,4 @@ export const checkLatLng = ([lat, lng]: [number, number], answerCenter: [number,
       return '↙️'
     }
   }
-  return ''
 }
