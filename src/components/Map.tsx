@@ -18,7 +18,6 @@ const pointOptions = {
 }
 
 const buildMap = (container: HTMLElement) => {
-  console.log('buildMap')
   instance = L.map(container, {
     center: [37, 110],
     zoom: 5,
@@ -70,7 +69,6 @@ export const MapComponent: Component<Props> = (props) => {
   onMount(() => buildMap(mapDom!))
 
   createEffect(() => {
-    console.log("The count is now", props.results)
     if (props.results.length > 0) {
       const lastResult = props.results[props.results.length - 1]
       addMark(lastResult.judge.location, lastResult.location)
