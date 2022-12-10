@@ -11,9 +11,14 @@ export interface Check {
   judge: {
     word: string
     location: LatLng
+    province: {
+      id: number
+      name: string
+    }
   }
   word: CharCheck[]
   location: string
+  same_province: boolean
 }
 
 export interface CharCheck {

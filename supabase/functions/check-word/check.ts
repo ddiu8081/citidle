@@ -75,9 +75,11 @@ export const checkWord = async (prompt: string): Promise<Check> => {
     judge: {
       word: prompt,
       location: promptCenter,
+      province: promptCity.province
     },
     word: wordCheckResult,
     location: locationCheckResult,
+    same_province: promptCity.province.id === answerCity.province.id,
   }
   return result
 }

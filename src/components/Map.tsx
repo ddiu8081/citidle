@@ -3,6 +3,7 @@ import type { Component } from 'solid-js'
 import L from 'leaflet'
 
 import type { Check } from '../../types/types'
+import provinceGeoJson from '../data/province'
 
 let instance: L.Map
 let lastPromptCenter: [number, number]
@@ -33,7 +34,30 @@ const buildMap = (container: HTMLElement) => {
   })
 }
 
-export const addMark = (center: [number, number], positionJudge: string) => {
+export const addProvinceMark = (adcode: number, exact: boolean) => {
+  if (instance) {
+    const provinceData = provinceGeoJson[adcode]
+    const geojson = {
+      type: 'FeatureCollection' as const,
+      features: [{
+        type: 'Feature',
+        geometry: {
+          type: 'MultiPolygon',
+          coordinates: provinceData.coordinates,
+        }
+      }],
+    }
+    L.geoJson(geojson, {
+      style: {
+        color: exact ? '#66b395' : '#666666',
+        weight: 1,
+        opacity: 0.65
+      },
+    }).addTo(instance)
+  }
+}
+
+export const addPointMark = (center: [number, number], positionJudge: string) => {
   if (instance) {
     // const marker = L.marker(center).addTo(instance)
 
@@ -71,7 +95,8 @@ export const MapComponent: Component<Props> = (props) => {
   createEffect(() => {
     if (props.results.length > 0) {
       const lastResult = props.results[props.results.length - 1]
-      addMark(lastResult.judge.location, lastResult.location)
+      addProvinceMark(lastResult.judge.province.id, lastResult.same_province)
+      addPointMark(lastResult.judge.location, lastResult.location)
     }
   })
   return (
