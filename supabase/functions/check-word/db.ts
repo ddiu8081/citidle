@@ -13,7 +13,7 @@ interface City {
 
 export const getCityData = async (cityName: string) => {
   const response = await supabase
-    .from('citys')
+    .from('cities')
     .select('name, lat, lng, pinyin, province (id, name)')
     .eq('name', cityName)
   const city: City = response.data?.[0]
