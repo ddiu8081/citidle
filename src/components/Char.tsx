@@ -30,9 +30,10 @@ export const Char: Component<Props> = (props) => {
   const detail = props.result.detail
   const match = props.result.match
   const tonePos = getTonePosition(detail.pinyin.yunmu)
-  const needReplaceI = tonePos === 0 && detail.pinyin.yunmu[0] === 'i'
+  const needReplaceToneI = tonePos === 0 && detail.pinyin.yunmu[0] === 'i'
+  const needShortenToneOffset = tonePos === 1 && detail.pinyin.yunmu[0] === 'i'
 
-  const toneLeftOffset = needReplaceI ? -0.1 : tonePos * 0.64
+  const toneLeftOffset = needReplaceToneI ? -0.1 : (tonePos * 0.64 + (needShortenToneOffset ? -0.36 : 0))
   const toneStyle: JSX.CSSProperties = {
     position: 'absolute',
     top: '-0.02em',
@@ -52,7 +53,7 @@ export const Char: Component<Props> = (props) => {
           class={palette.foreground[match.pinyin.yunmu + 1]}
           relative
         >
-          { needReplaceI ? detail.pinyin.yunmu.replace('i', 'ı') : detail.pinyin.yunmu }
+          { needReplaceToneI ? detail.pinyin.yunmu.replace('i', 'ı') : detail.pinyin.yunmu }
           <div style={toneStyle}>
             <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-ok absolute w-100% top-0 left-0">
               <path
